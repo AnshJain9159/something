@@ -1,6 +1,6 @@
 import { asyncHandler } from "../utils/asyncHandler.js";
-import  {ApiError}  from "../utils/ApiError.js";
-import {User} from "../models/user.models.js";
+import  { ApiError }  from "../utils/ApiError.js";
+import { User } from "../models/user.models.js";
 import {uploadOnCloudinary ,deleteFromCloudinary} from "../utils/cloudinary.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import jwt from "jsonwebtoken"
@@ -30,14 +30,6 @@ const registerUser = asyncHandler ( async(req, res) => {
     }
 
     
-    // const avatar = await uploadOnCloudinary(avatarLocalPath)
-
-    // let coverImage = ""
-    // if(coverLocalPath){
-    //     //doubtful scene hoskta hai idhr
-    //     coverImage = await uploadOnCloudinary(coverLocalPath) 
-    // }
-
     let avatar;
     try {
         avatar = await uploadOnCloudinary(avatarLocalPath)
@@ -96,9 +88,10 @@ const generateAccessAndRefreshToken = async (userId)=>{
         }
         const accessToken =  user.generateAccessToken()
         const refreshToken =  user.generateRefreshToken()
-        user.refreshToken()=refreshToken
+
+        user.refreshToken = refreshToken
         await user.save({validateBeforeSave: false})
-        return {accessToken, refreshToken}
+        return {accessToken, refreshToken};
     } catch (error) {
         throw new ApiError(500, "Something went wrong while generating token")
     }
@@ -135,7 +128,7 @@ const loginUser = asyncHandler (async(req, res) => {
 
     const options = {
         httpOnly:true,
-        secure: process.env.NODE_ENV==="development"
+        secure: process.env.NODE_ENV==="production"
 
     }
 
@@ -173,7 +166,7 @@ const refreshAccessToken = asyncHandler(async (req, res) =>{
 
         const options = {
             httpOnly:true,
-            secure: process.env.NODE_ENV==="development",
+            secure: process.env.NODE_ENV==="production",
         }
 
         const {accessToken, refreshToken: newRefreshToken} = await generateAccessAndRefreshToken(user._id)
@@ -193,15 +186,16 @@ const refreshAccessToken = asyncHandler(async (req, res) =>{
     }
 })
 
-const logoutUser = asyncHandler( async (req,res)=>{
-     await User.findByIdAndUpdate(
-        req.user_id,
-        //remaining
-     )
-})
+// const logoutUser = asyncHandler( async (req,res)=>{
+//     //  await User.findByIdAndUpdate(
+//     //     req.user_id,
+//     //     //remaining
+//     //  )
+// })
 
 export{ 
     registerUser,
     loginUser,
-    refreshToken
+    refreshAccessToken,
+    
 }
