@@ -19,11 +19,13 @@ const uploadOnCloudinary = async (localFilePath) => {
                 resource_type: 'auto',
             }
         )
+
         console.log('File uploaded to cloudinary: File Url:'+ response.url);
         //ek bar uplaod hogyi to server se hatado 
         return response;
         fs.unlinkSync(localFilePath);
     } catch (error) {
+        console.log("Error uploading coverImage",error)
         fs.unlinkSync(localFilePath);
         return null;
     }
